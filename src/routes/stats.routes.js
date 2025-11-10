@@ -10,7 +10,7 @@ const router = Router();
 
 /**
  * @swagger
- * /api/stats:
+ * /stats:
  *   get:
  *     summary: Get overall statistics
  *     tags: [Stats]
@@ -51,7 +51,7 @@ router.get('/', verifyStatsToken, getStats);
 
 /**
  * @swagger
- * /api/stats/recent:
+ * /stats/recent:
  *   get:
  *     summary: Get recent requests
  *     tags: [Stats]
@@ -98,7 +98,7 @@ router.get('/recent', verifyStatsToken, getRecentRequests);
 
 /**
  * @swagger
- * /api/stats/cleanup:
+ * /stats/cleanup:
  *   delete:
  *     summary: Delete old statistics
  *     tags: [Stats]
