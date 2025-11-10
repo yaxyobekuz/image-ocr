@@ -1,0 +1,34 @@
+{
+  "name": "image-ocr-api",
+  "version": "1.0.0",
+  "description": "Simple OCR REST API with Express and Tesseract.js",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [
+    "ocr",
+    "tesseract",
+    "express",
+    "rest-api"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "tesseract.js": "^5.0.4",
+    "multer": "^1.4.5-lts.1",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express-rate-limit": "^7.1.5",
+    "morgan": "^1.10.0",
+    "swagger-ui-express": "^5.0.0",
+    "swagger-jsdoc": "^6.2.8"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
