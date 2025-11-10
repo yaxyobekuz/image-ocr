@@ -48,6 +48,14 @@ RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 CORS_ORIGIN=*
 LOG_LEVEL=info
+
+# MongoDB Configuration
+MONGODB_URI=mongodb://localhost:27017/ocr-stats
+MONGODB_MAX_POOL_SIZE=10
+MONGODB_MIN_POOL_SIZE=2
+
+# Stats Secret Token (IMPORTANT: Change this!)
+STATS_SECRET_TOKEN=your-super-secret-token-here-change-this
 ```
 
 ---
@@ -114,6 +122,73 @@ API Docs: `http://localhost:3000/api-docs`
 
 ---
 
+### Statistics (Protected)
+
+All statistics endpoints require authentication via `STATS_SECRET_TOKEN`.
+
+**GET** `/api/stats`
+
+Get overall statistics with optional filters.
+
+**Headers:**
+* `x-stats-token`: Your secret stats token
+
+**Query Parameters:**
+* `startDate` (optional): Filter from date (ISO 8601)
+* `endDate` (optional): Filter to date (ISO 8601)
+* `endpoint` (optional): Filter by endpoint
+* `success` (optional): Filter by success status (true/false)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Statistics retrieved successfully",
+  "data": {
+    "overall": {
+      "totalRequests": 1234,
+      "successfulRequests": 1200,
+      "failedRequests": 34,
+      "successRate": 97.25,
+      "avgResponseTime": 1523.45,
+      "minResponseTime": 234,
+      "maxResponseTime": 5432,
+      "avgConfidence": 94.32,
+      "totalDataProcessed": 15728640
+    },
+    "byEndpoint": [...],
+    "hourly": [...]
+  }
+}
+```
+
+**GET** `/api/stats/recent`
+
+Get recent requests with optional filters.
+
+**Headers:**
+* `x-stats-token`: Your secret stats token
+
+**Query Parameters:**
+* `limit` (optional): Number of results (default: 100)
+* `startDate` (optional): Filter from date
+* `endDate` (optional): Filter to date
+* `endpoint` (optional): Filter by endpoint
+* `success` (optional): Filter by success status
+
+**DELETE** `/api/stats/cleanup`
+
+Delete old statistics.
+
+**Headers:**
+* `x-stats-token`: Your secret stats token
+
+**Query Parameters:**
+* `daysToKeep` (optional): Days to keep (default: 90)
+
+---
+
 ## Supported Languages
 
 * `eng` – English
@@ -133,6 +208,7 @@ Additional Tesseract traineddata files can be installed for more languages.
 * Node.js
 * Express.js
 * Tesseract.js
+* MongoDB + Mongoose
 * Multer (file upload)
 * Helmet (security)
 * Swagger (API documentation)
@@ -155,10 +231,18 @@ Additional Tesseract traineddata files can be installed for more languages.
 image-ocr/
   src/
     config/          # Configuration files
+      db.config.js   # MongoDB connection
+      env.config.js  # Environment config
+      swagger.config.js
     controllers/     # Route controllers
     middleware/      # Express middlewares
+      auth.js        # Stats token authentication
+    models/          # MongoDB models
+      stats.model.js # Statistics schema
     routes/          # API routes
     services/        # Business logic
+      ocr.service.js
+      stats.service.js
     utils/           # Helper utilities
     app.js           # Express app setup
     server.js        # Server entry point
@@ -196,6 +280,22 @@ fetch('http://localhost:3000/api/ocr/process', {
   .then(res => res.json())
   .then(data => console.log(data))
   .catch(err => console.error(err));
+```
+
+---
+
+### Get Statistics
+
+```bash
+curl -X GET http://localhost:3000/api/stats \
+  -H "x-stats-token: your-super-secret-token-here-change-this"
+```
+
+Or with query parameters:
+
+```bash
+curl -X GET "http://localhost:3000/api/stats?startDate=2024-01-01&endDate=2024-12-31" \
+  -H "x-stats-token: your-super-secret-token-here-change-this"
 ```
 
 ---
