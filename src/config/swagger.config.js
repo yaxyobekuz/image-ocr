@@ -25,8 +25,17 @@ const options = {
     tags: [
       { name: "OCR", description: "OCR processing endpoints" },
       { name: "Health", description: "Health check endpoints" },
+      { name: "Stats", description: "Statistics endpoints (requires token)" },
     ],
     components: {
+      securitySchemes: {
+        StatsToken: {
+          type: "apiKey",
+          in: "header",
+          name: "x-stats-token",
+          description: "Secret token for accessing statistics endpoints",
+        },
+      },
       schemas: {
         Error: {
           type: "object",

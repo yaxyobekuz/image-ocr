@@ -23,6 +23,14 @@ export const config = {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 900000,
     maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS, 10) || 100,
   },
+  mongodb: {
+    uri: process.env.MONGODB_URI || "mongodb://localhost:27017/ocr-stats",
+    maxPoolSize: parseInt(process.env.MONGODB_MAX_POOL_SIZE, 10) || 10,
+    minPoolSize: parseInt(process.env.MONGODB_MIN_POOL_SIZE, 10) || 2,
+  },
+  stats: {
+    secretToken: process.env.STATS_SECRET_TOKEN || "your-super-secret-token-here-change-this",
+  },
 };
 
 export const isProduction = config.server.env === "production";
