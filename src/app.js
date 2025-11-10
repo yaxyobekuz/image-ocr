@@ -4,14 +4,20 @@ import cors from "cors";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 import { config } from "./config/env.config.js";
+import { connectDB } from "./config/db.config.js";
 import { logger } from "./utils/logger.js";
 import { limiter } from "./middleware/rateLimiter.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 import { swaggerSpec } from "./config/swagger.config.js";
 import healthRoutes from "./routes/health.routes.js";
 import ocrRoutes from "./routes/ocr.routes.js";
+import statsRoutes from "./routes/stats.routes.js";
 
 const app = express();
+
+connectDB(config.mongodb.uri).catch((error) => {
+  logger.error('Failed to connect to MongoDB', { error: error.message });
+});
 
 app.use(helmet());
 
@@ -48,6 +54,7 @@ app.get("/", (req, res) => {
 
 app.use("/api", healthRoutes);
 app.use("/api/ocr", ocrRoutes);
+app.use("/api/stats", statsRoutes);
 
 app.use(notFoundHandler);
 

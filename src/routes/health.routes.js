@@ -1,4 +1,5 @@
 import express from 'express';
+import statsService from '../services/stats.service.js';
 
 const router = express.Router();
 
@@ -30,12 +31,28 @@ const router = express.Router();
  *                   description: Server uptime in seconds
  */
 router.get('/health', (req, res) => {
-  res.status(200).json({
+  const startTime = Date.now();
+  
+  const response = {
     success: true,
     message: 'Server is running',
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
+  };
+  
+  const responseTime = Date.now() - startTime;
+  
+  statsService.recordRequest({
+    endpoint: '/api/health',
+    method: req.method,
+    statusCode: 200,
+    responseTime,
+    ipAddress: req.ip,
+    userAgent: req.get('user-agent'),
+    success: true,
   });
+  
+  res.status(200).json(response);
 });
 
 export default router;
